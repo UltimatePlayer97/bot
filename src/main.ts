@@ -3,11 +3,13 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 import * as fs from "fs";
 import chokidar from "chokidar";
-import { general, secrets } from "../config.json";
+import { general, secrets, roles } from "../config.json";
 dotenv.config();
 
 const client = new Client({
   intents: [
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildPresences,
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
@@ -106,6 +108,26 @@ client.on("messageCreate", (message: Message) => {
       message.reply("There was an error executing that command!");
     }
   }
+});
+
+client.on("guildMemberAdd", async (member) => {
+  try {
+    const role = await member.guild.roles.fetch(roles.stoof_test);
+
+    if (!role) {
+      console.error(`Role with ID ${roles.stoof_test} not found.`);
+      return;
+    }
+
+    await member.roles.add(role);
+    console.log(`Added role ${role.name} to ${member.user.tag}`);
+  } catch (error) {
+    console.error("Failed to assign role:", error);
+  }
+});
+
+client.on("guildMemberRemove", (member) => {
+  console.log(`guildMemberRemove: ${member.id}`);
 });
 
 client.login(secrets.discord);
