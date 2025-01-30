@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 import * as fs from "fs";
 import chokidar from "chokidar";
-import { general } from "../config.json";
+import { general, secrets } from "../config.json";
 dotenv.config();
 
 const client = new Client({
@@ -108,4 +108,4 @@ client.on("messageCreate", (message: Message) => {
   }
 });
 
-client.login(process.env.TOKEN);
+client.login(secrets.discord);
