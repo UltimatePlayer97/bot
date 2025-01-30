@@ -1,1 +1,3 @@
 config.json
+bun.lock
+node_modules/
