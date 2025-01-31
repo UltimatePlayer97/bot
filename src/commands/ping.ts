@@ -1,15 +1,10 @@
-import { Message, EmbedBuilder } from "discord.js";
-import fs from "fs";
-import path from "path";
+import { Message } from "discord.js";
 
 export const data = {
   name: "ping",
   description: "Test replies.",
 };
 
-export const execute = async (
-  message: Message,
-  args: string[],
-): Promise<void> => {
+export const execute = async (message: Message): Promise<void> => {
   await message.reply("pong!");
 };
