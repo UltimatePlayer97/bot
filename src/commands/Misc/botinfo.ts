@@ -7,12 +7,22 @@ export const data = {
   description: "Get information about the bot and its codebase.",
 };
 
+const formatUptime = (ms: number): string => {
+  const seconds = Math.floor((ms / 1000) % 60);
+  const minutes = Math.floor((ms / (1000 * 60)) % 60);
+  const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+};
+
 export const execute = async (
   message: Message,
-  args: string[],
+  args: string[]
 ): Promise<void> => {
   try {
     const botStats = getBotStats(__dirname + "/" + "../");
+    const uptime = formatUptime(message.client.uptime || 0);
     const embed = new EmbedBuilder()
       .setColor("#ff5733")
       .setTitle("Bot Information")
@@ -38,6 +48,11 @@ export const execute = async (
           value: `\`\`${botStats.totalFunctions}\`\``,
           inline: true,
         },
+        {
+          name: "Uptime",
+          value: `\`\`${uptime}\`\``,
+          inline: true,
+        }
       )
       .setTimestamp();
 
@@ -73,7 +88,7 @@ const getBotStats = (dirPath: string) => {
 
         const functionMatches =
           fileContent.match(
-            /function\s+\w+\s*\(|const\s+\w+\s*=\s*\(|let\s+\w+\s*=\s*\(|\w+\s*:\s*\(.*?\)\s*=>|class\s+\w+|constructor\s*\(|\w+\s*\(.*?\)\s*{/g,
+            /function\s+\w+\s*\(|const\s+\w+\s*=\s*\(|let\s+\w+\s*=\s*\(|\w+\s*:\s*\(.*?\)\s*=>|class\s+\w+|constructor\s*\(|\w+\s*\(.*?\)\s*{/g
           ) || [];
         totalFunctions += functionMatches.length;
       }
