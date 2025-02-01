@@ -6,7 +6,7 @@ export const data = {
 };
 
 const parseDuration = (input: string): number | null => {
-  const match = input.match(/^(\d+)([smhd])$/);
+  const match = input?.match(/^(\d+)([smhd])$/);
   if (!match) return null;
 
   const value = parseInt(match[1]);
@@ -14,13 +14,13 @@ const parseDuration = (input: string): number | null => {
 
   switch (unit) {
     case "s":
-      return value * 1000; // Seconds to ms
+      return value * 1000;
     case "m":
-      return value * 60 * 1000; // Minutes to ms
+      return value * 60 * 1000;
     case "h":
-      return value * 60 * 60 * 1000; // Hours to ms
+      return value * 60 * 60 * 1000;
     case "d":
-      return value * 24 * 60 * 60 * 1000; // Days to ms
+      return value * 24 * 60 * 60 * 1000;
     default:
       return null;
   }
@@ -33,7 +33,8 @@ export const execute = async (
   if (args[0]?.toLowerCase() === "help") {
     await message.reply(
       "**Mute Command Usage:**\n" +
-        "`mute @user [reason]` - Mutes the mentioned user with an optional reason.\n" +
+        "`mute @user <duration> [reason]` - Mutes the mentioned user for the specified duration.\n" +
+        "Examples: `mute @user 10s`, `mute 123456789012345678 5m`.\n" +
         "`mute help` - Shows this help message."
     );
     return;
@@ -60,7 +61,6 @@ export const execute = async (
 
   let target: GuildMember | undefined;
 
-  // Check for mention or ID
   if (message.mentions.members?.first()) {
     target = message.mentions.members.first()!;
   } else {
@@ -88,9 +88,19 @@ export const execute = async (
   }
 
   const durationArg = args[1];
+
+  if (!durationArg) {
+    await message.reply(
+      "❌ You must specify a duration (e.g., `10s`, `5m`, `2h`, `1d`)."
+    );
+    return;
+  }
+
   const durationMs = parseDuration(durationArg);
   if (!durationMs) {
-    await message.reply("❌ Invalid duration. Use `10s`, `5m`, `2h`, or `1d`.");
+    await message.reply(
+      "❌ Invalid duration format. E.g. `10s`, `5m`, `2h`, or `1d`."
+    );
     return;
   }
 
