@@ -1,32 +1,38 @@
 import { Message, PermissionFlagsBits, Client } from "discord.js";
 
 export const data = {
-  name: "ban",
-  description: "Ban a user from the server.",
+  name: "kick",
+  description: "Kick a user from the server.",
+  category: "Moderation",
 };
 
 export const execute = async (
   message: Message,
-  args: string[] = []
+  args: string[] = [],
 ): Promise<void> => {
   if (!message || !message.member || !message.guild) {
     console.error("❌ Invalid message object received:", message);
     return;
   }
 
-  console.log("✅ Ban command executed by:", message.author.tag, "Args:", args);
+  console.log(
+    "✅ Kick command executed by:",
+    message.author.tag,
+    "Args:",
+    args,
+  );
 
   if (args[0]?.toLowerCase() === "help") {
     await message.reply(
-      "**Ban Command Usage:**\n" +
-        "`ban user [reason]` - Bans the mentioned user with an optional reason.\n" +
-        "`ban help` - Shows this help message."
+      "**Kick Command Usage:**\n" +
+        "`kick @user [reason]` - Kicks the mentioned user with an optional reason.\n" +
+        "`kick help` - Shows this help message.",
     );
     return;
   }
 
-  if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) {
-    await message.reply("❌ You don't have permission to ban members.");
+  if (!message.member.permissions.has(PermissionFlagsBits.KickMembers)) {
+    await message.reply("❌ You don't have permission to kick members.");
     return;
   }
 
@@ -46,20 +52,20 @@ export const execute = async (
   }
 
   if (!target) {
-    await message.reply("❌ Please mention a user to ban.");
+    await message.reply("❌ Please mention a user to kick.");
     return;
   }
 
   if (
-    !message.guild.members.me?.permissions.has(PermissionFlagsBits.BanMembers)
+    !message.guild.members.me?.permissions.has(PermissionFlagsBits.KickMembers)
   ) {
-    await message.reply("❌ I don't have permission to ban members.");
+    await message.reply("❌ I don't have permission to kick members.");
     return;
   }
 
-  if (!target.bannable) {
+  if (!target.kickable) {
     await message.reply(
-      "❌ I can't ban this user. They may have a higher role than me."
+      "❌ I can't kick this user. They may have a higher role than me.",
     );
     return;
   }
@@ -71,13 +77,13 @@ export const execute = async (
       .send(`🚫 You were banned in ${message.guild.name}. | Reason: ${reason}`)
       .catch(() =>
         console.log(
-          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`
-        )
+          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`,
+        ),
       );
 
-    await target.ban({ reason });
+    await target.kick(reason);
     await message.reply(
-      `✅ **${target.user.tag}** has been banned. | Reason: **${reason}**`
+      `✅ **${target.user.tag}** has been kicked. | Reason: **${reason}**`,
     );
   } catch (error) {
     console.error(error);

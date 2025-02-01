@@ -4,25 +4,25 @@ import { parse } from "dotenv";
 export const data = {
   name: "purge",
   description: "Bulk deletes a specified number of messages.",
+  category: "Moderation",
 };
 
 export const execute = async (
   message: Message,
-  args: string[] = []
+  args: string[] = [],
 ): Promise<void> => {
-
   if (args[0]?.toLowerCase() === "help") {
     await message.reply(
       "**Purge Command Usage:**\n" +
         "`purge [number of messages]` - bulk deletes a specified amount of messages (up to 100).\n" +
-        "`purge help` - Shows this help message."
+        "`purge help` - Shows this help message.",
     );
     return;
   }
 
   const num = parseInt(args[0]);
   const permission = message.member?.permissions.has(
-    PermissionFlagsBits.ManageMessages
+    PermissionFlagsBits.ManageMessages,
   );
 
   if (!permission) {
@@ -53,7 +53,7 @@ export const execute = async (
   } catch (error) {
     console.error(error);
     await message.reply(
-      "❌ Failed to delete messages. Ensure messages are not older than 14 days."
+      "❌ Failed to delete messages. Ensure messages are not older than 14 days.",
     );
   }
 };

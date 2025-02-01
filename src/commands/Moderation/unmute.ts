@@ -3,17 +3,18 @@ import { Message, PermissionFlagsBits, GuildMember } from "discord.js";
 export const data = {
   name: "unmute",
   description: "Unmute a user in the server.",
+  category: "Moderation",
 };
 
 export const execute = async (
   message: Message,
-  args: string[]
+  args: string[],
 ): Promise<void> => {
   if (args[0]?.toLowerCase() === "help") {
     await message.reply(
       "**Unmute Command Usage:**\n" +
         "`unmute @user [reason]` - Unmutes the mentioned user with an optional reason.\n" +
-        "`unmute help` - Shows this help message."
+        "`unmute help` - Shows this help message.",
     );
     return;
   }
@@ -30,7 +31,7 @@ export const execute = async (
 
   if (
     !message.guild.members.me?.permissions.has(
-      PermissionFlagsBits.ModerateMembers
+      PermissionFlagsBits.ModerateMembers,
     )
   ) {
     await message.reply("❌ I don't have permission to unmute members.");

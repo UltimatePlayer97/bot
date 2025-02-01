@@ -3,11 +3,12 @@ import { Message, PermissionFlagsBits, Client } from "discord.js";
 export const data = {
   name: "unban",
   description: "unban a user from the server.",
+  category: "Moderation",
 };
 
 export const execute = async (
   message?: Message,
-  args: string[] = []
+  args: string[] = [],
 ): Promise<void> => {
   if (!message || !message.member || !message.guild) {
     console.error("❌ Invalid message object received:", message);
@@ -18,14 +19,14 @@ export const execute = async (
     "✅ unban command executed by:",
     message.author.tag,
     "Args:",
-    args
+    args,
   );
 
   if (args[0]?.toLowerCase() === "help") {
     await message.reply(
       "**Unban Command Usage:**\n" +
         "`unban <userID> [reason]` - Unbans the user with the given ID and an optional reason.\n" +
-        "`unban help` - Shows this help message."
+        "`unban help` - Shows this help message.",
     );
     return;
   }
@@ -61,12 +62,12 @@ export const execute = async (
 
     await message.guild.members.unban(user_id, reason);
     await message.reply(
-      `✅ **${banned_user.user.tag} ** has been unbanned. | Reason: **${reason}**.`
+      `✅ **${banned_user.user.tag} ** has been unbanned. | Reason: **${reason}**.`,
     );
   } catch (error) {
     console.error(error);
     await message.reply(
-      "❌ Failed to unban the user. Make sure the ID is correct."
+      "❌ Failed to unban the user. Make sure the ID is correct.",
     );
   }
 };
