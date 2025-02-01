@@ -30,6 +30,15 @@ export const execute = async (
   message: Message,
   args: string[]
 ): Promise<void> => {
+  if (args[0]?.toLowerCase() === "help") {
+    await message.reply(
+      "**Mute Command Usage:**\n" +
+        "`mute @user [reason]` - Mutes the mentioned user with an optional reason.\n" +
+        "`mute help` - Shows this help message."
+    );
+    return;
+  }
+
   if (!message || !message.member || !message.guild) {
     console.error("❌ Invalid message object received:", message);
     return;
