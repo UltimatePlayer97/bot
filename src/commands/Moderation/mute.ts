@@ -3,7 +3,6 @@ import { Message, PermissionFlagsBits, GuildMember } from "discord.js";
 export const data = {
   name: "mute",
   description: "Mute a user for a specified duration (e.g., 10s, 5m, 2h, 1d).",
-  category: "Moderation",
 };
 
 const parseDuration = (input: string): number | null => {

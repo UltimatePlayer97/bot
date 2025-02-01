@@ -3,7 +3,6 @@ import { Message, PermissionFlagsBits, Client } from "discord.js";
 export const data = {
   name: "kick",
   description: "Kick a user from the server.",
-  category: "Moderation",
 };
 
 export const execute = async (

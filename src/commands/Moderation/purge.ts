@@ -4,7 +4,6 @@ import { parse } from "dotenv";
 export const data = {
   name: "purge",
   description: "Bulk deletes a specified number of messages.",
-  category: "Moderation",
 };
 
 export const execute = async (

@@ -5,7 +5,6 @@ import path from "path";
 export const data = {
   name: "botinfo",
   description: "Get information about the bot and its codebase.",
-  category: "Misc",
 };
 
 export const execute = async (

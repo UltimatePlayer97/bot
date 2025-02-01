@@ -3,7 +3,6 @@ import { Message, PermissionFlagsBits, GuildMember } from "discord.js";
 export const data = {
   name: "unmute",
   description: "Unmute a user in the server.",
-  category: "Moderation",
 };
 
 export const execute = async (
