@@ -72,9 +72,17 @@ export const execute = async (
   const reason = args.slice(1).join(" ") || "No reason provided";
 
   try {
+    await target
+      .send(`🚫 You were banned in ${message.guild.name}. | Reason: ${reason}`)
+      .catch(() =>
+        console.log(
+          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`
+        )
+      );
+
     await target.kick(reason);
     await message.reply(
-      `✅ **${target.user.tag}** has been kicked. Reason: ${reason}`
+      `✅ **${target.user.tag}** has been kicked. | Reason: **${reason}**`
     );
   } catch (error) {
     console.error(error);

@@ -100,7 +100,7 @@ export const execute = async (
 
     await target.timeout(durationMs, reason);
     await message.reply(
-      `✅ Muted ${target.user.tag} for ${durationArg}. | Reason: ${reason}`
+      `✅ Muted ${target.user.tag} for ${durationArg}. | Reason: **${reason}**`
     );
   } catch (error) {
     console.error(error);

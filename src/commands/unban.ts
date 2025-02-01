@@ -61,7 +61,7 @@ export const execute = async (
 
     await message.guild.members.unban(user_id, reason);
     await message.reply(
-      `✅ Successfully unbanned **${banned_user.user.tag} ** with reason **${reason}**.`
+      `✅ **${banned_user.user.tag} ** has been unbanned. | Reason: **${reason}**.`
     );
   } catch (error) {
     console.error(error);
