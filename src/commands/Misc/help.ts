@@ -77,7 +77,7 @@ export const execute = async (message: Message): Promise<void> => {
     .addOptions(options);
 
   const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-    selectMenu,
+    selectMenu
   );
 
   const sentMessage = await message.reply({
@@ -85,14 +85,15 @@ export const execute = async (message: Message): Promise<void> => {
     components: [row],
   });
 
-  const filter = (interaction: StringSelectMenuInteraction) =>
+  const filter = (interaction: any) =>
+    interaction.isStringSelectMenu() &&
     interaction.user.id === message.author.id;
   const collector = sentMessage.createMessageComponentCollector({
     filter,
     time: 60000,
   });
 
-  collector.on("collect", async (interaction) => {
+  collector.on("collect", async (interaction: StringSelectMenuInteraction) => {
     const selectedCategory = interaction.values[0];
     const commandsList = categories[selectedCategory]
       .map((cmd) => `**${cmd.name}** - ${cmd.description}`)
@@ -100,7 +101,9 @@ export const execute = async (message: Message): Promise<void> => {
 
     const categoryEmbed = new EmbedBuilder()
       .setTitle(
-        `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Commands`,
+        `${
+          selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)
+        } Commands`
       )
       .setDescription(commandsList)
       .setColor(0x5865f2);
