@@ -1,4 +1,4 @@
-import { Message, PermissionFlagsBits, Client } from "discord.js";
+import { Message, PermissionFlagsBits, Client, EmbedBuilder } from "discord.js";
 
 export const data = {
   name: "kick",
@@ -7,7 +7,7 @@ export const data = {
 
 export const execute = async (
   message: Message,
-  args: string[] = [],
+  args: string[] = []
 ): Promise<void> => {
   if (!message || !message.member || !message.guild) {
     console.error("❌ Invalid message object received:", message);
@@ -18,15 +18,21 @@ export const execute = async (
     "✅ Kick command executed by:",
     message.author.tag,
     "Args:",
-    args,
+    args
   );
 
   if (args[0]?.toLowerCase() === "help") {
-    await message.reply(
-      "**Kick Command Usage:**\n" +
-        "`kick @user [reason]` - Kicks the mentioned user with an optional reason.\n" +
-        "`kick help` - Shows this help message.",
-    );
+    if (args[0]?.toLowerCase() === "help") {
+      const help_embed = new EmbedBuilder()
+        .setTitle("Kick Command Usage")
+        .setDescription(
+          "`kick user [reason]` - Kicks the mentioned user with an optional reason.\n" +
+            "`kick help` - Shows this help message."
+        )
+        .setColor("#5865f2");
+
+      await message.reply({ embeds: [help_embed] });
+    }
     return;
   }
 
@@ -64,7 +70,7 @@ export const execute = async (
 
   if (!target.kickable) {
     await message.reply(
-      "❌ I can't kick this user. They may have a higher role than me.",
+      "❌ I can't kick this user. They may have a higher role than me."
     );
     return;
   }
@@ -76,13 +82,13 @@ export const execute = async (
       .send(`🚫 You were banned in ${message.guild.name}. | Reason: ${reason}`)
       .catch(() =>
         console.log(
-          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`,
-        ),
+          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`
+        )
       );
 
     await target.kick(reason);
     await message.reply(
-      `✅ **${target.user.tag}** has been kicked. | Reason: **${reason}**`,
+      `✅ **${target.user.tag}** has been kicked. | Reason: **${reason}**`
     );
   } catch (error) {
     console.error(error);

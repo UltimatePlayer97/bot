@@ -1,4 +1,9 @@
-import { Message, PermissionFlagsBits, GuildMember } from "discord.js";
+import {
+  Message,
+  PermissionFlagsBits,
+  GuildMember,
+  EmbedBuilder,
+} from "discord.js";
 
 export const data = {
   name: "unmute",
@@ -7,14 +12,18 @@ export const data = {
 
 export const execute = async (
   message: Message,
-  args: string[],
+  args: string[]
 ): Promise<void> => {
   if (args[0]?.toLowerCase() === "help") {
-    await message.reply(
-      "**Unmute Command Usage:**\n" +
-        "`unmute @user [reason]` - Unmutes the mentioned user with an optional reason.\n" +
-        "`unmute help` - Shows this help message.",
-    );
+    const help_embed = new EmbedBuilder()
+      .setTitle("Unmute Command Usage")
+      .setDescription(
+        "`unmute @user <duration> [reason]` -  Unmutes the mentioned user with an optional reason.\n" +
+          "`unmute help` - Shows this help message."
+      )
+      .setColor("#5865f2");
+
+    await message.reply({ embeds: [help_embed] });
     return;
   }
 
@@ -30,7 +39,7 @@ export const execute = async (
 
   if (
     !message.guild.members.me?.permissions.has(
-      PermissionFlagsBits.ModerateMembers,
+      PermissionFlagsBits.ModerateMembers
     )
   ) {
     await message.reply("❌ I don't have permission to unmute members.");

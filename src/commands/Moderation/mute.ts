@@ -1,4 +1,9 @@
-import { Message, PermissionFlagsBits, GuildMember } from "discord.js";
+import {
+  Message,
+  PermissionFlagsBits,
+  GuildMember,
+  EmbedBuilder,
+} from "discord.js";
 
 export const data = {
   name: "mute",
@@ -28,15 +33,18 @@ const parseDuration = (input: string): number | null => {
 
 export const execute = async (
   message: Message,
-  args: string[],
+  args: string[]
 ): Promise<void> => {
   if (args[0]?.toLowerCase() === "help") {
-    await message.reply(
-      "**Mute Command Usage:**\n" +
-        "`mute @user <duration> [reason]` - Mutes the mentioned user for the specified duration.\n" +
-        "Examples: `mute @user 10s`, `mute 123456789012345678 5m`.\n" +
-        "`mute help` - Shows this help message.",
-    );
+    const help_embed = new EmbedBuilder()
+      .setTitle("Mute Command Usage")
+      .setDescription(
+        "`mute @user <duration> [reason]` -  Mutes the mentioned user for the specified duration.\n" +
+          "`mute help` - Shows this help message."
+      )
+      .setColor("#5865f2");
+
+    await message.reply({ embeds: [help_embed] });
     return;
   }
 
@@ -52,7 +60,7 @@ export const execute = async (
 
   if (
     !message.guild.members.me?.permissions.has(
-      PermissionFlagsBits.ModerateMembers,
+      PermissionFlagsBits.ModerateMembers
     )
   ) {
     await message.reply("❌ I don't have permission to mute members.");
@@ -82,7 +90,7 @@ export const execute = async (
 
   if (!target.moderatable) {
     await message.reply(
-      "❌ I can't mute this user. They may have a higher role than me.",
+      "❌ I can't mute this user. They may have a higher role than me."
     );
     return;
   }
@@ -91,7 +99,7 @@ export const execute = async (
 
   if (!durationArg) {
     await message.reply(
-      "❌ You must specify a duration (e.g., `10s`, `5m`, `2h`, `1d`).",
+      "❌ You must specify a duration (e.g., `10s`, `5m`, `2h`, `1d`)."
     );
     return;
   }
@@ -99,7 +107,7 @@ export const execute = async (
   const durationMs = parseDuration(durationArg);
   if (!durationMs) {
     await message.reply(
-      "❌ Invalid duration format. E.g. `10s`, `5m`, `2h`, or `1d`.",
+      "❌ Invalid duration format. E.g. `10s`, `5m`, `2h`, or `1d`."
     );
     return;
   }
@@ -109,17 +117,17 @@ export const execute = async (
   try {
     await target
       .send(
-        `🚫 You were muted in ${message.guild.name} for ${durationArg}. | Reason: ${reason}`,
+        `🚫 You were muted in ${message.guild.name} for ${durationArg}. | Reason: ${reason}`
       )
       .catch(() =>
         console.log(
-          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`,
-        ),
+          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`
+        )
       );
 
     await target.timeout(durationMs, reason);
     await message.reply(
-      `✅ Muted ${target.user.tag} for ${durationArg}. | Reason: **${reason}**`,
+      `✅ Muted ${target.user.tag} for ${durationArg}. | Reason: **${reason}**`
     );
   } catch (error) {
     console.error(error);

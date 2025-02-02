@@ -1,4 +1,9 @@
-import { Message, PermissionFlagsBits, TextChannel } from "discord.js";
+import {
+  EmbedBuilder,
+  Message,
+  PermissionFlagsBits,
+  TextChannel,
+} from "discord.js";
 import { parse } from "dotenv";
 
 export const data = {
@@ -8,20 +13,24 @@ export const data = {
 
 export const execute = async (
   message: Message,
-  args: string[] = [],
+  args: string[] = []
 ): Promise<void> => {
   if (args[0]?.toLowerCase() === "help") {
-    await message.reply(
-      "**Purge Command Usage:**\n" +
-        "`purge [number of messages]` - bulk deletes a specified amount of messages (up to 100).\n" +
-        "`purge help` - Shows this help message.",
-    );
+    const help_embed = new EmbedBuilder()
+      .setTitle("Purge Command Usage")
+      .setDescription(
+        "`purge [number of messages]` - bulk deletes a specified amount of messages (up to 100)\n" +
+          "`purge help` - Shows this help message."
+      )
+      .setColor("#5865f2");
+
+    await message.reply({ embeds: [help_embed] });
     return;
   }
 
   const num = parseInt(args[0]);
   const permission = message.member?.permissions.has(
-    PermissionFlagsBits.ManageMessages,
+    PermissionFlagsBits.ManageMessages
   );
 
   if (!permission) {
@@ -52,7 +61,7 @@ export const execute = async (
   } catch (error) {
     console.error(error);
     await message.reply(
-      "❌ Failed to delete messages. Ensure messages are not older than 14 days.",
+      "❌ Failed to delete messages. Ensure messages are not older than 14 days."
     );
   }
 };

@@ -1,4 +1,4 @@
-import { Message, PermissionFlagsBits, Client } from "discord.js";
+import { Message, PermissionFlagsBits, Client, EmbedBuilder } from "discord.js";
 
 export const data = {
   name: "ban",
@@ -7,7 +7,7 @@ export const data = {
 
 export const execute = async (
   message: Message,
-  args: string[] = [],
+  args: string[] = []
 ): Promise<void> => {
   if (!message || !message.member || !message.guild) {
     console.error("❌ Invalid message object received:", message);
@@ -17,11 +17,15 @@ export const execute = async (
   console.log("✅ Ban command executed by:", message.author.tag, "Args:", args);
 
   if (args[0]?.toLowerCase() === "help") {
-    await message.reply(
-      "**Ban Command Usage:**\n" +
+    const help_embed = new EmbedBuilder()
+      .setTitle("Ban Command Usage")
+      .setDescription(
         "`ban user [reason]` - Bans the mentioned user with an optional reason.\n" +
-        "`ban help` - Shows this help message.",
-    );
+          "`ban help` - Shows this help message."
+      )
+      .setColor("#5865f2");
+
+    await message.reply({ embeds: [help_embed] });
     return;
   }
 
@@ -59,7 +63,7 @@ export const execute = async (
 
   if (!target.bannable) {
     await message.reply(
-      "❌ I can't ban this user. They may have a higher role than me.",
+      "❌ I can't ban this user. They may have a higher role than me."
     );
     return;
   }
@@ -71,13 +75,13 @@ export const execute = async (
       .send(`🚫 You were banned in ${message.guild.name}. | Reason: ${reason}`)
       .catch(() =>
         console.log(
-          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`,
-        ),
+          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`
+        )
       );
 
     await target.ban({ reason });
     await message.reply(
-      `✅ **${target.user.tag}** has been banned. | Reason: **${reason}**`,
+      `✅ **${target.user.tag}** has been banned. | Reason: **${reason}**`
     );
   } catch (error) {
     console.error(error);
