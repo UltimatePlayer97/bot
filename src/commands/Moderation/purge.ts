@@ -57,7 +57,7 @@ export const execute = async (
 
   try {
     const messages = await channel.bulkDelete(num, true);
-    await message.reply(`✅ Deleted ${num} messages.`);
+    await channel.send(`✅ Deleted ${num} messages.`);
   } catch (error) {
     console.error(error);
     await message.reply(
