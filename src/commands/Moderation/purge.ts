@@ -4,7 +4,6 @@ import {
   PermissionFlagsBits,
   TextChannel,
 } from "discord.js";
-import { parse } from "dotenv";
 
 export const data = {
   name: "purge",
@@ -57,13 +56,19 @@ export const execute = async (
 
   try {
     const messages = await channel.bulkDelete(num, true);
-    await channel.send({
+    const reply = await channel.send({
       embeds: [
         new EmbedBuilder()
           .setDescription(`✅ Deleted ${num} messages.`)
           .setColor(0x00ff00),
       ],
     });
+
+    setTimeout(() => {
+      reply
+        .delete()
+        .catch((err) => console.error("Failed to delete reply:", err));
+    }, 5000);
   } catch (error) {
     console.error(error);
     await message.reply(
