@@ -1,26 +1,62 @@
-import { Message, PermissionFlagsBits, TextChannel } from "discord.js";
+import {
+  EmbedBuilder,
+  Message,
+  PermissionFlagsBits,
+  TextChannel,
+} from "discord.js";
 
 export const data = {
   name: "unlock",
   description:
-    "Unlocks the current channel, allowing users to send messages again.",
+    "Unlocks the specified channel, allowing users to send messages and react.",
 };
 
-export const execute = async (message: Message) => {
-  if (!message.member?.permissions.has(PermissionFlagsBits.ManageChannels)) {
-    await message.reply("❌ You don't have permission to unlock channels.");
+export const execute = async (message: Message, args: string[] = []) => {
+  if (args[0]?.toLowerCase() === "help") {
+    const helpEmbed = new EmbedBuilder()
+      .setTitle("🔓 Unlock Command Help")
+      .setDescription(
+        "Unlocks a specified channel, allowing users to send messages and react."
+      )
+      .addFields(
+        {
+          name: "Usage",
+          value: "`unlock <#channel>` - Unlocks the mentioned channel.",
+        },
+        { name: "Example", value: "`unlock #general`" },
+        { name: "Permissions", value: "Requires `Manage Channels` permission." }
+      )
+      .setColor(0x00ff00);
+
+    await message.reply({ embeds: [helpEmbed] });
     return;
   }
 
-  const channel = message.channel as TextChannel;
+  if (!message.member?.permissions.has(PermissionFlagsBits.ManageChannels)) {
+    await message.reply("❌ You don't have permission to manage channels.");
+    return;
+  }
+
+  const channel = message.mentions.channels.first() as TextChannel;
+
+  if (!channel) {
+    await message.reply("❌ Please specify a channel to unlock.");
+    return;
+  }
 
   try {
-    await channel.permissionOverwrites.edit(message.guild!.roles.everyone, {
+    await channel.permissionOverwrites.edit(channel.guild.roles.everyone, {
       SendMessages: true,
-      AddReactions: true
+      AddReactions: true,
     });
 
-    await message.reply(`🔓 **${channel.name}** has been unlocked.`);
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(`🔓 **${channel}** has been unlocked.`)
+          .setColor(0x00ff00),
+      ],
+    });
   } catch (error) {
     console.error(error);
     await message.reply("❌ Failed to unlock the channel.");
