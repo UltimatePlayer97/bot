@@ -54,7 +54,10 @@ export const execute = async (
           inline: true,
         }
       )
-      .setTimestamp();
+      .setTimestamp()
+      .setFooter({
+        text: "https://github.com/UltimatePlayer97/bot",
+      });
 
     await message.reply({ embeds: [embed] });
   } catch (error) {
