@@ -57,7 +57,13 @@ export const execute = async (
 
   try {
     const messages = await channel.bulkDelete(num, true);
-    await channel.send(`✅ Deleted ${num} messages.`);
+    await channel.send({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(`✅ Deleted ${num} messages.`)
+          .setColor(0x00ff00),
+      ],
+    });
   } catch (error) {
     console.error(error);
     await message.reply(
