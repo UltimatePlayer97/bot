@@ -33,14 +33,40 @@ export const execute = async (message: Message, args: string[] = []) => {
   }
 
   if (!message.member?.permissions.has(PermissionFlagsBits.ManageChannels)) {
-    await message.reply("❌ You don't have permission to manage channels.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ You don't have permission to manage channels.")
+          .setColor("#FF0000"),
+      ],
+    });
     return;
   }
 
   const channel = message.mentions.channels.first() as TextChannel;
 
+  const everyone_role = message.guild!.roles.everyone;
+  const overwrite = channel.permissionOverwrites.cache.get(everyone_role.id);
+
+  if (!overwrite || !overwrite.deny.has(PermissionFlagsBits.SendMessages)) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ This channel is already unlocked.")
+          .setColor("#FF0000"),
+      ],
+    });
+    return;
+  }
+
   if (!channel) {
-    await message.reply("❌ Please specify a channel to unlock.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please specify a channel to unlock.")
+          .setColor("#FF0000"),
+      ],
+    });
     return;
   }
 
@@ -59,6 +85,12 @@ export const execute = async (message: Message, args: string[] = []) => {
     });
   } catch (error) {
     console.error(error);
-    await message.reply("❌ Failed to unlock the channel.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Failed to unlock the channel.")
+          .setColor("#FF0000"),
+      ],
+    });
   }
 };

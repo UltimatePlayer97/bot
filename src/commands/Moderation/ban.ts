@@ -30,7 +30,14 @@ export const execute = async (
   }
 
   if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) {
-    await message.reply("❌ You don't have permission to ban members.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ You don't have permission to ban members.")
+          .setColor("#FF0000")
+          .setTimestamp(),
+      ],
+    });
     return;
   }
 
@@ -43,28 +50,56 @@ export const execute = async (
       try {
         target = await message.guild.members.fetch(user_id);
       } catch (error) {
-        await message.reply("❌ User ID not found.");
+        await message.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setDescription("❌ User ID not found.")
+              .setColor("#FF0000")
+              .setTimestamp(),
+          ],
+        });
         return;
       }
     }
   }
 
   if (!target) {
-    await message.reply("❌ Please mention a user to ban.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please mention a user to ban.")
+          .setColor("#FF0000")
+          .setTimestamp(),
+      ],
+    });
     return;
   }
 
   if (
     !message.guild.members.me?.permissions.has(PermissionFlagsBits.BanMembers)
   ) {
-    await message.reply("❌ I don't have permission to ban members.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ I don't have permission to ban members.")
+          .setColor("#FF0000")
+          .setTimestamp(),
+      ],
+    });
     return;
   }
 
   if (!target.bannable) {
-    await message.reply(
-      "❌ I can't ban this user. They may have a higher role than me."
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            "❌ I can't ban this user. They may have a higher role than me."
+          )
+          .setColor("#FF0000")
+          .setTimestamp(),
+      ],
+    });
     return;
   }
 
@@ -72,7 +107,16 @@ export const execute = async (
 
   try {
     await target
-      .send(`🚫 You were banned in ${message.guild.name}. | Reason: ${reason}`)
+      .send({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle(`Banned from ${message.guild.name}`)
+            .setDescription(
+              `🚫 You were banned in ${message.guild.name}. | Reason: ${reason}`
+            )
+            .setTimestamp(),
+        ],
+      })
       .catch(() =>
         console.log(
           `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`
@@ -80,11 +124,25 @@ export const execute = async (
       );
 
     await target.ban({ reason });
-    await message.reply(
-      `✅ **${target.user.tag}** has been banned. | Reason: **${reason}**`
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            `✅ ${target.user.tag} has been banned. | Reason: ${reason}`
+          )
+          .setColor("#5865f2")
+          .setTimestamp(),
+      ],
+    });
   } catch (error) {
     console.error(error);
-    await message.reply("❌ Failed to ban user.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(`❌ Failed to ban ${target.user.tag}.`)
+          .setColor("#5865f2")
+          .setTimestamp(),
+      ],
+    });
   }
 };

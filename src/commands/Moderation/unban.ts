@@ -35,20 +35,41 @@ export const execute = async (
   }
 
   if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) {
-    await message.reply("❌ You don't have permission to unban members.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ You don't have permission to unban members.")
+          .setColor("#FF0000")
+          .setTimestamp(),
+      ],
+    });
     return;
   }
 
   const user_id = args[0];
   if (!user_id) {
-    await message.reply("❌ Please mention a user to unban.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please mention a user to unban.")
+          .setColor("#FF0000")
+          .setTimestamp(),
+      ],
+    });
     return;
   }
 
   if (
     !message.guild.members.me?.permissions.has(PermissionFlagsBits.BanMembers)
   ) {
-    await message.reply("❌ I don't have permission to unban members.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ I don't have permission to unban members.")
+          .setColor("#FF0000")
+          .setTimestamp(),
+      ],
+    });
     return;
   }
 
@@ -59,18 +80,39 @@ export const execute = async (
     const banned_user = bans.get(user_id);
 
     if (!banned_user) {
-      await message.reply("❌ This user is not banned.");
+      await message.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription("❌ This user is not banned.")
+            .setColor("#FF0000")
+            .setTimestamp(),
+        ],
+      });
       return;
     }
 
     await message.guild.members.unban(user_id, reason);
-    await message.reply(
-      `✅ **${banned_user.user.tag} ** has been unbanned. | Reason: **${reason}**.`
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            `✅ **${banned_user.user.tag} ** has been unbanned. | Reason: **${reason}**.`
+          )
+          .setColor("#FF0000")
+          .setTimestamp(),
+      ],
+    });
   } catch (error) {
     console.error(error);
-    await message.reply(
-      "❌ Failed to unban the user. Make sure the ID is correct."
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            "❌ Failed to unban the user. Make sure the ID is correct."
+          )
+          .setColor("#FF0000")
+          .setTimestamp(),
+      ],
+    });
   }
 };

@@ -1,4 +1,10 @@
-import { Message, PermissionFlagsBits, Client, EmbedBuilder } from "discord.js";
+import {
+  Message,
+  PermissionFlagsBits,
+  Client,
+  EmbedBuilder,
+  GuildMember,
+} from "discord.js";
 
 export const data = {
   name: "kick",
@@ -9,69 +15,88 @@ export const execute = async (
   message: Message,
   args: string[] = []
 ): Promise<void> => {
-  if (!message || !message.member || !message.guild) {
-    console.error("❌ Invalid message object received:", message);
-    return;
-  }
-
-  console.log(
-    "✅ Kick command executed by:",
-    message.author.tag,
-    "Args:",
-    args
-  );
-
   if (args[0]?.toLowerCase() === "help") {
-    if (args[0]?.toLowerCase() === "help") {
-      const help_embed = new EmbedBuilder()
-        .setTitle("Kick Command Usage")
-        .setDescription(
-          "`kick user [reason]` - Kicks the mentioned user with an optional reason.\n" +
-            "`kick help` - Shows this help message."
-        )
-        .setColor("#5865f2");
-
-      await message.reply({ embeds: [help_embed] });
-    }
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("Kick Command Usage")
+          .setDescription(
+            "`kick @user [reason]` - Kicks the mentioned user with an optional reason.\n" +
+              "`kick help` - Shows this help message."
+          )
+          .setColor(0x5865f2),
+      ],
+    });
     return;
   }
 
-  if (!message.member.permissions.has(PermissionFlagsBits.KickMembers)) {
-    await message.reply("❌ You don't have permission to kick members.");
+  if (!message.member?.permissions.has(PermissionFlagsBits.KickMembers)) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ You don't have permission to kick members.")
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
-  let target;
+  if (
+    !message.guild?.members.me?.permissions.has(PermissionFlagsBits.KickMembers)
+  ) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ I don't have permission to kick members.")
+          .setColor(0xff0000),
+      ],
+    });
+    return;
+  }
+
+  let target: GuildMember | undefined;
+
   if (message.mentions.members?.first()) {
-    target = message.mentions.members.first();
+    target = message.mentions.members.first()!;
   } else {
     const user_id = args[0];
     if (user_id) {
       try {
         target = await message.guild.members.fetch(user_id);
-      } catch (error) {
-        await message.reply("❌ User ID not found.");
+      } catch {
+        await message.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setDescription("❌ User ID not found.")
+              .setColor(0xff0000),
+          ],
+        });
         return;
       }
     }
   }
 
   if (!target) {
-    await message.reply("❌ Please mention a user to kick.");
-    return;
-  }
-
-  if (
-    !message.guild.members.me?.permissions.has(PermissionFlagsBits.KickMembers)
-  ) {
-    await message.reply("❌ I don't have permission to kick members.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please mention a user to kick.")
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
   if (!target.kickable) {
-    await message.reply(
-      "❌ I can't kick this user. They may have a higher role than me."
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            "❌ I can't kick this user. They may have a higher role than me."
+          )
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
@@ -79,7 +104,15 @@ export const execute = async (
 
   try {
     await target
-      .send(`🚫 You were banned in ${message.guild.name}. | Reason: ${reason}`)
+      .send({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription(
+              `🚫 You were kicked from **${message.guild.name}**.\n**Reason:** ${reason}`
+            )
+            .setColor(0xffa500),
+        ],
+      })
       .catch(() =>
         console.log(
           `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`
@@ -87,11 +120,24 @@ export const execute = async (
       );
 
     await target.kick(reason);
-    await message.reply(
-      `✅ **${target.user.tag}** has been kicked. | Reason: **${reason}**`
-    );
+
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            `✅ **${target.user.tag}** has been kicked.\n**Reason:** ${reason}`
+          )
+          .setColor(0x00ff00),
+      ],
+    });
   } catch (error) {
     console.error(error);
-    await message.reply("❌ Failed to ban user.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Failed to kick the user.")
+          .setColor(0xff0000),
+      ],
+    });
   }
 };
