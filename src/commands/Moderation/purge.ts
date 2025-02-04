@@ -33,22 +33,46 @@ export const execute = async (
   );
 
   if (!permission) {
-    await message.reply("❌ You don't have permission to manage messages.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ You don't have permission to manage messages.")
+          .setColor("#FF0000"),
+      ],
+    });
     return;
   }
 
   if (isNaN(num)) {
-    await message.reply("❌ Please provide a valid number.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please provide a valid number.")
+          .setColor("#FF0000"),
+      ],
+    });
     return;
   }
 
-  if (num === 0) {
-    message.reply("I can't delete 0 messages.");
+  if (num <= 0) {
+    message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please provide a number greater than 0.")
+          .setColor("#FF0000"),
+      ],
+    });
     return;
   }
 
   if (num > 100) {
-    message.reply("Calm down, I can only delete up to 100 messages");
+    message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("Calm down, I can only delete up to 100 messages")
+          .setColor("#FF0000"),
+      ],
+    });
     return;
   }
 
@@ -71,8 +95,12 @@ export const execute = async (
     }, 5000);
   } catch (error) {
     console.error(error);
-    await message.reply(
-      "❌ Failed to delete messages. Ensure messages are not older than 14 days."
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Failed to delete messages.")
+          .setColor("#FF0000"),
+      ],
+    });
   }
 };
