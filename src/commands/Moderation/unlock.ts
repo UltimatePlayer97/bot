@@ -33,7 +33,13 @@ export const execute = async (message: Message, args: string[] = []) => {
   }
 
   if (!message.member?.permissions.has(PermissionFlagsBits.ManageChannels)) {
-    await message.reply("❌ You don't have permission to manage channels.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ You don't have permission to manage channels.")
+          .setColor("#FF0000"),
+      ],
+    });
     return;
   }
 
@@ -54,7 +60,13 @@ export const execute = async (message: Message, args: string[] = []) => {
   }
 
   if (!channel) {
-    await message.reply("❌ Please specify a channel to unlock.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please specify a channel to unlock.")
+          .setColor("#FF0000"),
+      ],
+    });
     return;
   }
 

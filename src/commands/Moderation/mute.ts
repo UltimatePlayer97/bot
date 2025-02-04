@@ -36,34 +36,52 @@ export const execute = async (
   args: string[]
 ): Promise<void> => {
   if (args[0]?.toLowerCase() === "help") {
-    const help_embed = new EmbedBuilder()
-      .setTitle("Mute Command Usage")
-      .setDescription(
-        "`mute @user <duration> [reason]` -  Mutes the mentioned user for the specified duration.\n" +
-          "`mute help` - Shows this help message."
-      )
-      .setColor("#5865f2");
-
-    await message.reply({ embeds: [help_embed] });
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("🚫 Mute Command Help")
+          .setDescription("Mutes a specified user for a given duration.")
+          .addFields(
+            {
+              name: "Usage",
+              value:
+                "`mute @user <duration> [reason]` - Mutes the mentioned user.",
+            },
+            { name: "Example", value: "`mute @UltimatePlayer 5m Spamming`" },
+            {
+              name: "Permissions",
+              value: "Requires `Moderate Members` permission.",
+            }
+          )
+          .setColor(0x5865f2),
+      ],
+    });
     return;
   }
 
-  if (!message || !message.member || !message.guild) {
-    console.error("❌ Invalid message object received:", message);
-    return;
-  }
-
-  if (!message.member.permissions.has(PermissionFlagsBits.ModerateMembers)) {
-    await message.reply("❌ You don't have permission to mute members.");
+  if (!message.member?.permissions.has(PermissionFlagsBits.ModerateMembers)) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ You don't have permission to mute members.")
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
   if (
-    !message.guild.members.me?.permissions.has(
+    !message.guild?.members.me?.permissions.has(
       PermissionFlagsBits.ModerateMembers
     )
   ) {
-    await message.reply("❌ I don't have permission to mute members.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ I don't have permission to mute members.")
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
@@ -77,38 +95,68 @@ export const execute = async (
       try {
         target = await message.guild.members.fetch(userId);
       } catch {
-        await message.reply("❌ User ID not found.");
+        await message.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setDescription("❌ User ID not found.")
+              .setColor(0xff0000),
+          ],
+        });
         return;
       }
     }
   }
 
   if (!target) {
-    await message.reply("❌ Please mention a user or provide their ID.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please mention a user or provide their ID.")
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
   if (!target.moderatable) {
-    await message.reply(
-      "❌ I can't mute this user. They may have a higher role than me."
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            "❌ I can't mute this user. They may have a higher role than me."
+          )
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
   const durationArg = args[1];
 
   if (!durationArg) {
-    await message.reply(
-      "❌ You must specify a duration (e.g., `10s`, `5m`, `2h`, `1d`)."
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            "❌ You must specify a duration (e.g., `10s`, `5m`, `2h`, `1d`)."
+          )
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
   const durationMs = parseDuration(durationArg);
   if (!durationMs) {
-    await message.reply(
-      "❌ Invalid duration format. E.g. `10s`, `5m`, `2h`, or `1d`."
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            "❌ Invalid duration format. E.g. `10s`, `5m`, `2h`, or `1d`."
+          )
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
@@ -116,21 +164,36 @@ export const execute = async (
 
   try {
     await target
-      .send(
-        `🚫 You were muted in ${message.guild.name} for ${durationArg}. | Reason: ${reason}`
-      )
-      .catch(() =>
-        console.log(
-          `❌ Failed to DM ${target.user.tag}. They may have DMs disabled.`
-        )
-      );
+      .send({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription(
+              `🚫 You were muted in **${message.guild.name}** for **${durationArg}**.\n**Reason:** ${reason}`
+            )
+            .setColor(0xffa500),
+        ],
+      })
+      .catch(() => console.log(`❌ Failed to DM ${target.user.tag}.`));
 
     await target.timeout(durationMs, reason);
-    await message.reply(
-      `✅ Muted ${target.user.tag} for ${durationArg}. | Reason: **${reason}**`
-    );
+
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(
+            `✅ **${target.user.tag}** has been muted for **${durationArg}**.\n**Reason:** ${reason}`
+          )
+          .setColor(0x00ff00),
+      ],
+    });
   } catch (error) {
     console.error(error);
-    await message.reply("❌ Failed to mute the user.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Failed to mute the user.")
+          .setColor(0xff0000),
+      ],
+    });
   }
 };

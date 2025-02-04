@@ -13,50 +13,65 @@ export const data = {
 
 export const execute = async (message: Message, args: string[] = []) => {
   if (args[0]?.toLowerCase() === "help") {
-    const helpEmbed = new EmbedBuilder()
-      .setTitle("🔒 Lock Command Help")
-      .setDescription(
-        "Locks a specified channel, preventing users from sending messages and adding reactions."
-      )
-      .addFields(
-        {
-          name: "Usage",
-          value: "`lock <#channel>` - Locks the mentioned channel.",
-        },
-        { name: "Example", value: "`lock #general`" },
-        { name: "Permissions", value: "Requires `Manage Channels` permission." }
-      )
-      .setColor(0xff0000);
-
-    await message.reply({ embeds: [helpEmbed] });
-    return;
-  }
-
-  if (!message.member?.permissions.has(PermissionFlagsBits.ManageChannels)) {
-    await message.reply("❌ You don't have permission to manage channels.");
-    return;
-  }
-
-  const channel = message.mentions.channels.first() as TextChannel;
-
-  const everyone_role = message.guild!.roles.everyone;
-  const overwrite = channel.permissionOverwrites.cache.get(everyone_role.id);
-
-  if (!overwrite || overwrite.deny.has(PermissionFlagsBits.SendMessages)) {
     await message.reply({
       embeds: [
         new EmbedBuilder()
-          .setDescription("❌ This channel is already locked.")
-          .setColor("#FF0000"),
+          .setTitle("🔒 Lock Command Help")
+          .setDescription(
+            "Locks a specified channel, preventing users from sending messages and adding reactions."
+          )
+          .addFields(
+            {
+              name: "Usage",
+              value: "`lock <#channel>` - Locks the mentioned channel.",
+            },
+            { name: "Example", value: "`lock #general`" },
+            {
+              name: "Permissions",
+              value: "Requires `Manage Channels` permission.",
+            }
+          )
+          .setColor(0xff0000),
       ],
     });
     return;
   }
 
+  if (!message.member?.permissions.has(PermissionFlagsBits.ManageChannels)) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ You don't have permission to manage channels.")
+          .setColor(0xff0000),
+      ],
+    });
+    return;
+  }
+
+  const channel = message.mentions.channels.first() as TextChannel;
+
   if (!channel) {
-    await message.reply(
-      "❌ Please specify a channel to lock. Example: `lock #general`"
-    );
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please specify a channel to lock.`")
+          .setColor(0xff0000),
+      ],
+    });
+    return;
+  }
+
+  const everyone_role = message.guild!.roles.everyone;
+  const overwrite = channel.permissionOverwrites.cache.get(everyone_role.id);
+
+  if (overwrite && overwrite.deny.has(PermissionFlagsBits.SendMessages)) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ This channel is already locked.")
+          .setColor(0xff0000),
+      ],
+    });
     return;
   }
 
@@ -69,12 +84,18 @@ export const execute = async (message: Message, args: string[] = []) => {
     await message.reply({
       embeds: [
         new EmbedBuilder()
-          .setDescription(`🔓 **${channel}** has been locked.`)
+          .setDescription(`🔒 **${channel}** has been locked.`)
           .setColor(0x00ff00),
       ],
     });
   } catch (error) {
     console.error(error);
-    await message.reply("❌ Failed to lock the channel.");
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Failed to lock the channel.")
+          .setColor(0xff0000),
+      ],
+    });
   }
 };
