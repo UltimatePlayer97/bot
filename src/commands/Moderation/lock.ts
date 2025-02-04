@@ -39,6 +39,20 @@ export const execute = async (message: Message, args: string[] = []) => {
 
   const channel = message.mentions.channels.first() as TextChannel;
 
+  const everyone_role = message.guild!.roles.everyone;
+  const overwrite = channel.permissionOverwrites.cache.get(everyone_role.id);
+
+  if (!overwrite || overwrite.deny.has(PermissionFlagsBits.SendMessages)) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ This channel is already locked.")
+          .setColor("#FF0000"),
+      ],
+    });
+    return;
+  }
+
   if (!channel) {
     await message.reply(
       "❌ Please specify a channel to lock. Example: `lock #general`"
