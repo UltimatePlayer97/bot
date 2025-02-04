@@ -48,7 +48,8 @@ export const execute = async (
       }
     )
     .setColor("Random")
-    .setTimestamp();
+    .setTimestamp()
+    .setFooter({ text: `Requested by ${message.author.username}` });
 
   await channel.send({ embeds: [embed] });
 };

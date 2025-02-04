@@ -14,7 +14,7 @@ export const execute = async (message: Message): Promise<void> => {
 
     const sentMessage = await message.reply({ embeds: [embed] });
 
-    await new Promise((res) => setTimeout(res, 3000));
+    await new Promise((res) => setTimeout(res, 1000));
 
     const latency = sentMessage.createdTimestamp - message.createdTimestamp;
     const apiLatency = message.client.ws.ping;
