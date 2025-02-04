@@ -18,10 +18,16 @@ export const execute = async (
     await message.reply({
       embeds: [
         new EmbedBuilder()
-          .setTitle("Kick Command Usage")
+          .setTitle("Slowmode Command Usage")
           .setDescription(
-            "`slowmode [time] - sets slowmode of specified channel.`\n" +
-              "`slowmode help` - Shows this help message."
+            "`slowmode [time]` - Sets the slowmode of the current channel.\n" +
+              "`slowmode help` - Shows this help message.\n\n" +
+              "**Time Formats:**\n" +
+              "- `5s` → 5 seconds\n" +
+              "- `2m` → 2 minutes (120s)\n" +
+              "- `1h` → 1 hour (3600s)\n" +
+              "- `2.5m` → 2 minutes 30 seconds (150s)\n" +
+              "- `6h` → 6 hours (21600s, max limit)"
           )
           .setColor(0x5865f2),
       ],
@@ -55,13 +61,42 @@ export const execute = async (
     return;
   }
 
-  let num = parseInt(args[0]);
-
-  if (isNaN(num)) {
+  if (!args[0]) {
     await message.reply({
       embeds: [
         new EmbedBuilder()
-          .setDescription("❌ Please provide a valid number.")
+          .setDescription(
+            "❌ Please specify a valid time (e.g., `5s`, `2.5m`, `1h`)."
+          )
+          .setColor(0xff0000),
+      ],
+    });
+    return;
+  }
+
+  const timeMatch = args[0].match(/^(\d*\.?\d+)([smh])$/);
+  if (!timeMatch) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Invalid format. Use `5s`, `2.5m`, or `1h`.")
+          .setColor(0xff0000),
+      ],
+    });
+    return;
+  }
+
+  const [, value, unit] = timeMatch;
+  let slowmodeSeconds = parseFloat(value);
+
+  if (unit === "m") slowmodeSeconds *= 60;
+  else if (unit === "h") slowmodeSeconds *= 3600;
+
+  if (slowmodeSeconds > 21600) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Maximum slowmode is 6 hours (21600 seconds).")
           .setColor(0xff0000),
       ],
     });
@@ -71,11 +106,13 @@ export const execute = async (
   const channel = message.channel as TextChannel;
 
   try {
-    await channel.setRateLimitPerUser(num);
+    await channel.setRateLimitPerUser(Math.floor(slowmodeSeconds));
     await message.reply({
       embeds: [
         new EmbedBuilder()
-          .setDescription(`✅ Slowmode set to ${num} seconds.`)
+          .setDescription(
+            `✅ Slowmode set to **${Math.floor(slowmodeSeconds)} seconds**.`
+          )
           .setColor(0x5865f2),
       ],
     });
