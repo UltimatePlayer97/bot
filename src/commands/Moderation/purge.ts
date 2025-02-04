@@ -79,7 +79,7 @@ export const execute = async (
   const channel = message.channel as TextChannel;
 
   try {
-    const messages = await channel.bulkDelete(num, true);
+    const messages = await channel.bulkDelete(num + 1, true);
     const reply = await channel.send({
       embeds: [
         new EmbedBuilder()
