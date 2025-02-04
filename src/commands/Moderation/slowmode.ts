@@ -7,7 +7,7 @@ import {
 
 export const data = {
   name: "slowmode",
-  description: "Changes the slowmode timer of the channel.",
+  description: "Changes the slowmode timer of a channel.",
 };
 
 export const execute = async (
@@ -20,7 +20,7 @@ export const execute = async (
         new EmbedBuilder()
           .setTitle("Slowmode Command Usage")
           .setDescription(
-            "`slowmode [time]` - Sets the slowmode of the current channel.\n" +
+            "`slowmode [time] [#channel]` - Sets the slowmode of the specified channel.\n" +
               "`slowmode help` - Shows this help message.\n\n" +
               "**Time Formats:**\n" +
               "- `5s` → 5 seconds\n" +
@@ -65,9 +65,7 @@ export const execute = async (
     await message.reply({
       embeds: [
         new EmbedBuilder()
-          .setDescription(
-            "❌ Please specify a valid time (e.g., `5s`, `2.5m`, `1h`)."
-          )
+          .setDescription("❌ Please specify a valid time.")
           .setColor(0xff0000),
       ],
     });
@@ -79,7 +77,7 @@ export const execute = async (
     await message.reply({
       embeds: [
         new EmbedBuilder()
-          .setDescription("❌ Invalid format. Use `5s`, `2.5m`, or `1h`.")
+          .setDescription("❌ Invalid format. Use `s`, `m`, or `h`.")
           .setColor(0xff0000),
       ],
     });
@@ -103,15 +101,22 @@ export const execute = async (
     return;
   }
 
-  const channel = message.channel as TextChannel;
+  let targetChannel = message.mentions.channels.first() as
+    | TextChannel
+    | undefined;
+  if (!targetChannel) {
+    targetChannel = message.channel as TextChannel;
+  }
 
   try {
-    await channel.setRateLimitPerUser(Math.floor(slowmodeSeconds));
+    await targetChannel.setRateLimitPerUser(Math.floor(slowmodeSeconds));
     await message.reply({
       embeds: [
         new EmbedBuilder()
           .setDescription(
-            `✅ Slowmode set to **${Math.floor(slowmodeSeconds)} seconds**.`
+            `✅ Slowmode set to **${Math.floor(
+              slowmodeSeconds
+            )} seconds** in ${targetChannel}.`
           )
           .setColor(0x5865f2),
       ],
