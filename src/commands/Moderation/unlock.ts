@@ -45,6 +45,17 @@ export const execute = async (message: Message, args: string[] = []) => {
 
   const channel = message.mentions.channels.first() as TextChannel;
 
+  if (!channel) {
+    await message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription("❌ Please specify a channel to unlock.")
+          .setColor("#FF0000"),
+      ],
+    });
+    return;
+  }
+
   const everyone_role = message.guild!.roles.everyone;
   const overwrite = channel.permissionOverwrites.cache.get(everyone_role.id);
 
@@ -53,17 +64,6 @@ export const execute = async (message: Message, args: string[] = []) => {
       embeds: [
         new EmbedBuilder()
           .setDescription("❌ This channel is already unlocked.")
-          .setColor("#FF0000"),
-      ],
-    });
-    return;
-  }
-
-  if (!channel) {
-    await message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("❌ Please specify a channel to unlock.")
           .setColor("#FF0000"),
       ],
     });
