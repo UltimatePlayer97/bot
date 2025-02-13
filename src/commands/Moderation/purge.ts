@@ -23,7 +23,9 @@ export const execute = async (
       )
       .setColor("#5865f2");
 
-    await message.reply({ embeds: [help_embed] });
+    await message
+      .reply({ embeds: [help_embed] })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -33,46 +35,54 @@ export const execute = async (
   );
 
   if (!permission) {
-    await message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("❌ You don't have permission to manage messages.")
-          .setColor("#FF0000"),
-      ],
-    });
+    await message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription("❌ You don't have permission to manage messages.")
+            .setColor("#FF0000"),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
   if (isNaN(num)) {
-    await message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("❌ Please provide a valid number.")
-          .setColor("#FF0000"),
-      ],
-    });
+    await message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription("❌ Please provide a valid number.")
+            .setColor("#FF0000"),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
   if (num <= 0) {
-    message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("❌ Please provide a number greater than 0.")
-          .setColor("#FF0000"),
-      ],
-    });
+    message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription("❌ Please provide a number greater than 0.")
+            .setColor("#FF0000"),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
   if (num > 100) {
-    message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("Calm down, I can only delete up to 100 messages")
-          .setColor("#FF0000"),
-      ],
-    });
+    message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription("Calm down, I can only delete up to 100 messages")
+            .setColor("#FF0000"),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -95,12 +105,14 @@ export const execute = async (
     }, 5000);
   } catch (error) {
     console.error(error);
-    await message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("❌ Failed to delete messages.")
-          .setColor("#FF0000"),
-      ],
-    });
+    await message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription("❌ Failed to delete messages.")
+            .setColor("#FF0000"),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
   }
 };

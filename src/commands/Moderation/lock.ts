@@ -33,7 +33,7 @@ export const execute = async (message: Message, args: string[] = []) => {
           )
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -44,7 +44,7 @@ export const execute = async (message: Message, args: string[] = []) => {
           .setDescription("❌ You don't have permission to manage channels.")
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -57,7 +57,7 @@ export const execute = async (message: Message, args: string[] = []) => {
           .setDescription("❌ Please specify a channel to lock.`")
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -71,7 +71,7 @@ export const execute = async (message: Message, args: string[] = []) => {
           .setDescription("❌ This channel is already locked.")
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -96,6 +96,6 @@ export const execute = async (message: Message, args: string[] = []) => {
           .setDescription("❌ Failed to lock the channel.")
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
   }
 };

@@ -25,19 +25,23 @@ export const execute = async (
       )
       .setColor("#5865f2");
 
-    await message.reply({ embeds: [help_embed] });
+    await message
+      .reply({ embeds: [help_embed] })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
   if (!message.member.permissions.has(PermissionFlagsBits.BanMembers)) {
-    await message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("❌ You don't have permission to ban members.")
-          .setColor("#FF0000")
-          .setTimestamp(),
-      ],
-    });
+    await message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription("❌ You don't have permission to ban members.")
+            .setColor("#FF0000")
+            .setTimestamp(),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -50,56 +54,64 @@ export const execute = async (
       try {
         target = await message.guild.members.fetch(user_id);
       } catch (error) {
-        await message.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setDescription("❌ User ID not found.")
-              .setColor("#FF0000")
-              .setTimestamp(),
-          ],
-        });
+        await message
+          .reply({
+            embeds: [
+              new EmbedBuilder()
+                .setDescription("❌ User ID not found.")
+                .setColor("#FF0000")
+                .setTimestamp(),
+            ],
+          })
+          .then((msg) => setTimeout(() => msg.delete(), 5000));
         return;
       }
     }
   }
 
   if (!target) {
-    await message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("❌ Please mention a user to ban.")
-          .setColor("#FF0000")
-          .setTimestamp(),
-      ],
-    });
+    await message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription("❌ Please mention a user to ban.")
+            .setColor("#FF0000")
+            .setTimestamp(),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
   if (
     !message.guild.members.me?.permissions.has(PermissionFlagsBits.BanMembers)
   ) {
-    await message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("❌ I don't have permission to ban members.")
-          .setColor("#FF0000")
-          .setTimestamp(),
-      ],
-    });
+    await message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription("❌ I don't have permission to ban members.")
+            .setColor("#FF0000")
+            .setTimestamp(),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
   if (!target.bannable) {
-    await message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription(
-            "❌ I can't ban this user. They may have a higher role than me."
-          )
-          .setColor("#FF0000")
-          .setTimestamp(),
-      ],
-    });
+    await message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription(
+              "❌ I can't ban this user. They may have a higher role than me."
+            )
+            .setColor("#FF0000")
+            .setTimestamp(),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -136,13 +148,15 @@ export const execute = async (
     });
   } catch (error) {
     console.error(error);
-    await message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription(`❌ Failed to ban ${target.user.tag}.`)
-          .setColor("#5865f2")
-          .setTimestamp(),
-      ],
-    });
+    await message
+      .reply({
+        embeds: [
+          new EmbedBuilder()
+            .setDescription(`❌ Failed to ban ${target.user.tag}.`)
+            .setColor("#5865f2")
+            .setTimestamp(),
+        ],
+      })
+      .then((msg) => setTimeout(() => msg.delete(), 5000));
   }
 };
