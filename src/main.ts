@@ -95,6 +95,9 @@ client.on("messageCreate", (message: Message) => {
   const commandName = args.shift()?.toLowerCase();
 
   if (!commandName || !commands.has(commandName)) {
+    if (!args[0]) {
+      return;
+    }
     message.reply("Command not found.");
     return;
   }
