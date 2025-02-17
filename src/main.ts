@@ -1,4 +1,5 @@
 import { Client, GatewayIntentBits, Message } from "discord.js";
+import db from "./drivers/database";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import * as fs from "fs";
@@ -88,13 +89,24 @@ client.once("ready", () => {
   console.log(`Timezone: ${general.timezone}`);
 });
 
-client.on("messageCreate", (message: Message) => {
-  if (!message.content.startsWith(general.prefix) || message.author.bot) return;
+client.on("messageCreate", async (message: Message) => {
+  if (message.author.bot) return;
+
+  const afkReason = await db.getAFK(message.author.id);
+  if (afkReason) {
+    await db.removeAFK(message.author.id);
+    message.reply(`Welcome back, ${message.author.displayName}!`);
+  }
+
+  if (!message.content.startsWith(general.prefix)) return;
 
   const args = message.content.slice(general.prefix.length).trim().split(/\s+/);
   const commandName = args.shift()?.toLowerCase();
 
   if (!commandName || !commands.has(commandName)) {
+    if (!args[0]) {
+      return;
+    }
     message.reply("Command not found.");
     return;
   }
