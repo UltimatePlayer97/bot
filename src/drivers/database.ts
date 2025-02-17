@@ -8,7 +8,7 @@ dotenv.config();
 
 const pool = new Pool({
   user: db.user || "postgres",
-  password: db.userPawsd || "azk;#4s9d!?",
+  password: db.userPaswd || "azk;#4s9d!?",
   host: db.host || "localhost",
   port: Number(db.port) || 5432,
   database: db.name || "db",
