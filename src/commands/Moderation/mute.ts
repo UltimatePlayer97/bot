@@ -55,7 +55,7 @@ export const execute = async (
           )
           .setColor(0x5865f2),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -66,7 +66,7 @@ export const execute = async (
           .setDescription("❌ You don't have permission to mute members.")
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -81,7 +81,7 @@ export const execute = async (
           .setDescription("❌ I don't have permission to mute members.")
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -101,7 +101,7 @@ export const execute = async (
               .setDescription("❌ User ID not found.")
               .setColor(0xff0000),
           ],
-        });
+        }).then(msg => setTimeout(() => msg.delete(), 5000));
         return;
       }
     }
@@ -114,7 +114,7 @@ export const execute = async (
           .setDescription("❌ Please mention a user or provide their ID.")
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -127,7 +127,7 @@ export const execute = async (
           )
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -142,7 +142,7 @@ export const execute = async (
           )
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -156,7 +156,7 @@ export const execute = async (
           )
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));
     return;
   }
 
@@ -194,6 +194,6 @@ export const execute = async (
           .setDescription("❌ Failed to mute the user.")
           .setColor(0xff0000),
       ],
-    });
+    }).then(msg => setTimeout(() => msg.delete(), 5000));;
   }
 };
